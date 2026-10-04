@@ -48,9 +48,10 @@ The rendered frames show a freeze like that plainly, so this tool measures the f
 npm install --save-dev remotion-qa     # or run it with npx
 ```
 
-It uses [`ffmpeg-static`](https://github.com/eugeneware/ffmpeg-static). If your
-npm skips install scripts and the binary is missing, it falls back to `ffmpeg`
-on your PATH, or set `REMOTION_QA_FFMPEG=/path/to/ffmpeg`.
+It uses [`ffmpeg-static`](https://github.com/eugeneware/ffmpeg-static). Newer
+npm versions skip install scripts, so if that binary is missing it uses `ffmpeg`
+from your PATH, and failing that downloads the bundled copy once on first run.
+To use a specific binary, set `REMOTION_QA_FFMPEG=/path/to/ffmpeg`.
 
 ## Commands
 

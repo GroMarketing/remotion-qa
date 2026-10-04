@@ -1,18 +1,42 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 
-/** Resolve an ffmpeg binary: $REMOTION_QA_FFMPEG, then ffmpeg-static, then PATH. */
+const MISSING = `ffmpeg not found. Fix it one of these ways:
+  - let the bundled copy download:  npm rebuild ffmpeg-static   (npm 11+ may skip install scripts by default)
+  - install ffmpeg on your PATH:     brew install ffmpeg | apt install ffmpeg | winget install ffmpeg
+  - or point at a binary:            REMOTION_QA_FFMPEG=/path/to/ffmpeg`;
+
+const onPath = () => spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' }).status === 0;
+
+let resolved;
+
+/**
+ * Resolve an ffmpeg binary: $REMOTION_QA_FFMPEG, then ffmpeg-static, then PATH.
+ * Newer npm versions skip install scripts, which leaves ffmpeg-static without
+ * its binary; in that case its own download step is run once, here.
+ */
 export function ffmpegPath() {
-  if (process.env.REMOTION_QA_FFMPEG) return process.env.REMOTION_QA_FFMPEG;
+  if (resolved) return resolved;
+  if (process.env.REMOTION_QA_FFMPEG) return (resolved = process.env.REMOTION_QA_FFMPEG);
+  let bundled = null;
   try {
-    // Newer npm versions can skip install scripts, leaving ffmpeg-static without its binary.
-    const p = require('ffmpeg-static');
-    if (p && existsSync(p)) return p;
+    bundled = require('ffmpeg-static');
   } catch {}
-  return 'ffmpeg';
+  if (bundled && existsSync(bundled)) return (resolved = bundled);
+  if (onPath()) return (resolved = 'ffmpeg');
+  if (bundled) {
+    try {
+      const installer = path.join(path.dirname(require.resolve('ffmpeg-static/package.json')), 'install.js');
+      process.stderr.write('remotion-qa: downloading ffmpeg (one time)...\n');
+      execFileSync(process.execPath, [installer], { cwd: path.dirname(installer), stdio: ['ignore', 'ignore', 'inherit'] });
+    } catch {}
+    if (existsSync(bundled)) return (resolved = bundled);
+  }
+  throw new Error(MISSING);
 }
 
 /**
@@ -20,7 +44,9 @@ export function ffmpegPath() {
  * `ffmpeg -i` with no output exits non-zero by design, so stderr is parsed.
  */
 export function probe(file) {
+  if (!existsSync(file)) throw new Error(`file not found: ${file}`);
   const r = spawnSync(ffmpegPath(), ['-hide_banner', '-nostdin', '-i', file], { encoding: 'utf8' });
+  if (r.error) throw new Error(r.error.code === 'ENOENT' ? MISSING : r.error.message);
   const err = r.stderr || '';
   const v = err.match(/Stream #\S+.*Video:.*?(\d{2,5})x(\d{2,5})/);
   if (!v) throw new Error(`no video stream found in ${file}`);

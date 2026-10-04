@@ -1,6 +1,6 @@
 {
   "name": "remotion-qa",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Measure rendered Remotion videos for sound-off readability: dead air, beats too fast to read, and text hidden under the Reels/Shorts UI.",
   "type": "module",
   "bin": {

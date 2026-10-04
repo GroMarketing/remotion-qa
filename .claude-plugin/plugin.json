@@ -1,7 +1,7 @@
 {
   "name": "remotion-qa",
   "description": "Measure rendered videos for sound-off readability: dead air, beats too fast to read, text under the Reels/Shorts UI, and mobile type floors.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "Ro Maldonado" },
   "license": "MIT",
   "keywords": ["remotion", "video", "reels", "shorts", "qa", "readability"]
