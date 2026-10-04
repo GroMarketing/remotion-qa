@@ -1,0 +1,11 @@
+{
+  "name": "remotion-qa",
+  "owner": { "name": "Ro Maldonado" },
+  "plugins": [
+    {
+      "name": "remotion-qa",
+      "source": "./",
+      "description": "Measure rendered videos for sound-off readability: dead air, beats too fast to read, text under the Reels/Shorts UI, and mobile type floors."
+    }
+  ]
+}

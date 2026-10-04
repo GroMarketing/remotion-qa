@@ -1,0 +1,34 @@
+name: remotion-qa
+description: Fail a build when a rendered video has dead air, beats too fast to read, or text under the Reels/Shorts UI.
+branding: { icon: film, color: orange }
+inputs:
+  files:
+    description: Space-separated video paths or globs.
+    required: true
+  beats:
+    description: Optional .srt/.vtt/.json with the text on screen per beat. Enables dead-air and too-fast checks.
+    required: false
+  channel:
+    description: Safe-zone channel (default detected from aspect; 9:16 uses reels-union).
+    required: false
+  max-dead:
+    description: Seconds of dead air allowed per static run when beats are given.
+    required: false
+    default: '1'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: npm ci --omit=dev --prefix "${{ github.action_path }}" --silent
+    - shell: bash
+      env:
+        FILES: ${{ inputs.files }}
+        BEATS: ${{ inputs.beats }}
+        CHANNEL: ${{ inputs.channel }}
+        MAX_DEAD: ${{ inputs.max-dead }}
+      run: |
+        args=()
+        [ -n "$BEATS" ] && args+=(--beats "$BEATS" --max-dead "$MAX_DEAD")
+        [ -n "$CHANNEL" ] && args+=(--channel "$CHANNEL")
+        # shellcheck disable=SC2086
+        node "${{ github.action_path }}/bin/remotion-qa.mjs" check $FILES "${args[@]}" --frames remotion-qa-frames

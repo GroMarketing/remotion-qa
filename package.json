@@ -1,0 +1,54 @@
+{
+  "name": "remotion-qa",
+  "version": "0.1.0",
+  "description": "Measure rendered Remotion videos for sound-off readability: dead air, beats too fast to read, and text hidden under the Reels/Shorts UI.",
+  "type": "module",
+  "bin": {
+    "remotion-qa": "bin/remotion-qa.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "skills",
+    ".claude-plugin",
+    "action.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "remotion",
+    "video",
+    "qa",
+    "reels",
+    "shorts",
+    "tiktok",
+    "captions",
+    "readability",
+    "accessibility",
+    "safe-zone",
+    "claude-code",
+    "skill"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GroMarketing/remotion-qa.git"
+  },
+  "homepage": "https://github.com/GroMarketing/remotion-qa#readme",
+  "bugs": {
+    "url": "https://github.com/GroMarketing/remotion-qa/issues"
+  },
+  "author": "Ro Maldonado"
+}
