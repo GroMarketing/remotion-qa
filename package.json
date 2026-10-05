@@ -1,7 +1,7 @@
 {
   "name": "remotion-qa",
-  "version": "0.1.2",
-  "description": "Measure rendered Remotion videos for sound-off readability: dead air, beats too fast to read, and text hidden under the Reels/Shorts UI.",
+  "version": "0.1.3",
+  "description": "Remotion video QA: check rendered videos for Instagram Reels, Facebook Reels and YouTube Shorts safe zones, dead air, captions too fast to read, and mobile font sizes. CLI, GitHub Action, Claude Code skill.",
   "type": "module",
   "bin": {
     "remotion-qa": "bin/remotion-qa.mjs"
@@ -30,13 +30,20 @@
     "qa",
     "reels",
     "shorts",
-    "tiktok",
     "captions",
     "readability",
     "accessibility",
     "safe-zone",
     "claude-code",
-    "skill"
+    "skill",
+    "remotion video",
+    "reels safe zone",
+    "instagram reels safe zone",
+    "youtube shorts safe zone",
+    "facebook reels",
+    "safe zone checker",
+    "video qa",
+    "subtitles"
   ],
   "license": "MIT",
   "dependencies": {
