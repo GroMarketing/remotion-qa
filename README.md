@@ -1,5 +1,7 @@
 # remotion-qa
 
+<p align="center"><img src="https://raw.githubusercontent.com/GroMarketing/remotion-qa/main/.github/social-preview.png" alt="remotion-qa: Remotion video QA" width="100%"></p>
+
 A safe zone and readability checker for Remotion videos and any mp4: Instagram Reels, Facebook Reels and YouTube Shorts safe zones, dead air, and captions that leave too fast.
 
 Check a rendered video for the things that make people scroll past it with the

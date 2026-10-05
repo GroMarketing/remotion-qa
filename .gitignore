@@ -9,3 +9,4 @@ remotion-qa-frames/
 *.pem
 *.key
 .DS_Store
+!.github/social-preview.png
