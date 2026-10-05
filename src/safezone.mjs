@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
-import { decodeGray, ffmpegPath, probe } from './ffmpeg.mjs';
+import { decodeGray, ffmpegPath, inputArgs, probe } from './ffmpeg.mjs';
 import { detectChannel, getChannel, scaledInsets } from './channels.mjs';
 
 /** Analyse at half the native canvas; plenty to locate an ink edge to ~2px. */
@@ -105,7 +105,7 @@ export function saveIntrusionFrames(report, dir) {
   const base = path.basename(report.file).replace(/\.[^.]+$/, '');
   return report.intrusions.map((x) => {
     const out = path.join(dir, `${base}-${x.side}-${x.at.toFixed(2)}s.png`);
-    execFileSync(ffmpegPath(), ['-y', '-loglevel', 'error', '-ss', String(x.at), '-i', report.file, '-frames:v', '1', '-vf', vf, out]);
+    execFileSync(ffmpegPath(), ['-y', '-loglevel', 'error', '-ss', String(x.at), ...inputArgs(report.file), '-frames:v', '1', '-vf', vf, out.replace(/%/g, '%%')]);
     return out;
   });
 }

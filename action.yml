@@ -31,4 +31,4 @@ runs:
         [ -n "$BEATS" ] && args+=(--beats "$BEATS" --max-dead "$MAX_DEAD")
         [ -n "$CHANNEL" ] && args+=(--channel "$CHANNEL")
         # shellcheck disable=SC2086
-        node "${{ github.action_path }}/bin/remotion-qa.mjs" check $FILES "${args[@]}" --frames remotion-qa-frames
+        node "${{ github.action_path }}/bin/remotion-qa.mjs" check "${args[@]}" --frames remotion-qa-frames -- $FILES

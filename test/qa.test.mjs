@@ -81,6 +81,21 @@ test('safezone skips footage instead of guessing', () => {
   assert.equal(r.intrusions.length, 0);
 });
 
+test('a file named like an option is still treated as a file after --', () => {
+  const odd = clip('--frames.mp4');
+  fs.copyFileSync(clip('clean.mp4'), odd);
+  const out = execFileSync(process.execPath, [path.resolve('bin/remotion-qa.mjs'), 'safezone', '--', odd], { encoding: 'utf8' });
+  assert.match(out, /--frames\.mp4/);
+  assert.match(out, /clear: nothing under the platform UI/);
+});
+
+test('inputs are opened as local files only', async () => {
+  const { inputArgs } = await import('../src/ffmpeg.mjs');
+  const a = inputArgs('concat:a.mp4|b.mp4');
+  assert.deepEqual(a.slice(0, 3), ['-protocol_whitelist', 'file', '-i']);
+  assert.match(a[3], /^file:\//);
+});
+
 test('type floors and device points', () => {
   assert.equal(minPx('hero'), 74);
   assert.equal(minPx('hero', { fontFactor: 1.08 }), 80);

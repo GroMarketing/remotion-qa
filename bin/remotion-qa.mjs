@@ -43,6 +43,8 @@ for (let i = 0; i < own.length; i++) {
   else if (a.startsWith('--')) opt[a.slice(2)] = true;
   else pos.push(a);
 }
+// For everything but `render`, `--` ends options: what follows are files, even names starting with "-".
+if (cmd !== 'render') pos.push(...passthrough);
 const json = Boolean(opt.json);
 const f2 = (x) => x.toFixed(2);
 const name = (f) => f.split('/').pop();

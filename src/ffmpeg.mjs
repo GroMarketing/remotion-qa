@@ -10,6 +10,13 @@ const MISSING = `ffmpeg not found. Fix it one of these ways:
   - install ffmpeg on your PATH:     brew install ffmpeg | apt install ffmpeg | winget install ffmpeg
   - or point at a binary:            REMOTION_QA_FFMPEG=/path/to/ffmpeg`;
 
+/**
+ * ffmpeg treats some input names as protocols (concat:, http:) and sniffs playlists by
+ * content, so a crafted ".mp4" could make it open network or other files. Inputs are
+ * always passed as explicit local files with every other protocol refused.
+ */
+export const inputArgs = (file) => ['-protocol_whitelist', 'file', '-i', `file:${path.resolve(file)}`];
+
 const onPath = () => spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' }).status === 0;
 
 let resolved;
@@ -45,7 +52,7 @@ export function ffmpegPath() {
  */
 export function probe(file) {
   if (!existsSync(file)) throw new Error(`file not found: ${file}`);
-  const r = spawnSync(ffmpegPath(), ['-hide_banner', '-nostdin', '-i', file], { encoding: 'utf8' });
+  const r = spawnSync(ffmpegPath(), ['-hide_banner', '-nostdin', ...inputArgs(file)], { encoding: 'utf8' });
   if (r.error) throw new Error(r.error.code === 'ENOENT' ? MISSING : r.error.message);
   const err = r.stderr || '';
   const v = err.match(/Stream #\S+.*Video:.*?(\d{2,5})x(\d{2,5})/);
@@ -66,7 +73,7 @@ export function probe(file) {
  */
 export function decodeGray(file, w, h, rate = null) {
   const vf = [rate ? `fps=${rate}` : null, `scale=${w}:${h}:flags=area`, 'format=gray'].filter(Boolean).join(',');
-  const data = execFileSync(ffmpegPath(), ['-nostdin', '-loglevel', 'error', '-i', file, '-vf', vf, '-f', 'rawvideo', '-'], {
+  const data = execFileSync(ffmpegPath(), ['-nostdin', '-loglevel', 'error', ...inputArgs(file), '-vf', vf, '-f', 'rawvideo', '-'], {
     maxBuffer: 1 << 30,
   });
   return { data, w, h, n: Math.floor(data.length / (w * h)) };
